@@ -1,2 +1,2 @@
 # hwprojects
-Differen hardware projects
+Different hardware projects
