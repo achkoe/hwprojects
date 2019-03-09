@@ -1,8 +1,8 @@
 TARGET=ledcontrol
 MCU=attiny85
 SOURCES=$(TARGET).c
-OBJECTS=$(SOURCES:.c=.o) ws2812/ws2812_tinymega.o
-CFLAGS=-c -Os -I ws2812
+OBJECTS=$(SOURCES:.c=.o) # ws2812/ws2812_tinymega.o
+CFLAGS=-c -Os -std=c99
 LDFLAGS=
 
 PROGRAMMER=avrispmkII
@@ -36,7 +36,8 @@ size:
 
 .PHONY: upload
 upload:
-	avrdude -b 115200 -V -p t167 $(PORT) -c$(PROGRAMMER) -Uflash:w:$(TARGET).hex:a
+	avrdude -b 115200 -V -p t85 $(PORT) -c$(PROGRAMMER) -Uflash:w:$(TARGET).hex:a
+
 
 clean_tmp:
 	rm -rf *.o
