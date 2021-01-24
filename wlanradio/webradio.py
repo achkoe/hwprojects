@@ -1,6 +1,8 @@
 import time
 import serial
 import subprocess
+import datetime
+
 
 playlistfile = "playlists/playlist.m3u"
 
@@ -58,7 +60,7 @@ def main():
         time.sleep(2)
         while True:
             if update:
-                connection.write(bytes("\x03{title}\x16Volume {volume}".format(title=title.decode("ascii"), volume=volumestr), "ascii"))
+                connection.write(bytes("\x03{title}\x16Volume {volume}  {time}".format(title=title.decode("ascii", errors="ignore"), volume=volumestr, time=datetime.datetime.now().strftime("%H:%M")), "ascii"))
                 connection.flush()
                 update = False
             if connection.in_waiting > 0:
