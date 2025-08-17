@@ -15,7 +15,9 @@
 #define BTNMIDDLE 8
 #define BTNRIGHT 7
 unsigned char MODE = WAITMODE;
-unsigned char value_minute, value_minute_save, value_second, value_second_save;
+unsigned char value_minute, value_minute_save;
+signed char value_second, value_second_save;
+unsigned long last_millis;
 #define VALUE_MINUTE_MAX 255
 #define VALUE_SECOND_MAX 59
 char BUFFER[16];
@@ -42,7 +44,17 @@ void onPinActivated(int btnNumber){
             updateSecond();
             setLCDUpDownOk();
         } else if (btnNumber == BTNRIGHT) {
-            // to be implemented
+            // 'Start' button pressed
+            MODE = RUNMODE;
+            //setCaption("Reset", "Pause", "Stop");
+            if (value_minute == 0 && value_second == 0) {
+                value_minute = VALUE_MINUTE_MAX;
+                value_second = VALUE_SECOND_MAX;
+            }
+            value_minute_save = value_minute;
+            value_second_save = value_second;
+            last_millis = millis();
+            updateLCD();
         }
     } 
     else if (MODE == MINMODE) {
@@ -97,6 +109,14 @@ void onPinActivated(int btnNumber){
             MODE = WAITMODE;
         }
     }
+    else if (MODE == ALERTMODE) {
+        // any button pressed
+        value_minute = value_minute_save;
+        value_second = value_second_save;
+        updateLCD();
+        setLCDMinSecStart();
+        MODE = WAITMODE;
+    }
     digitalWrite(LED_BUILTIN, HIGH);
 }
 
@@ -108,7 +128,7 @@ void onPinDeactivated(int pinNumber){
 }
 
 void updateLCD() {
-    sprintf(BUFFER, "%03d:%02d  ", value_minute, value_second);  // 2 spaces at end are needed to delete previous data
+    sprintf(BUFFER, "%03d:%02d          ", value_minute, value_second);  // trailing spaces at end are needed to delete previous data
     lcd.setCursor(0, 0);
     lcd.print(BUFFER);
 }
@@ -139,6 +159,13 @@ void setLCDUpDownOk() {
     lcd.print("Up   Down    OK");
 }
 
+void setLCDOkOkOk() {
+    lcd.setCursor(0, 1);
+            // 00000000011111111
+            // 12345678901234456
+    lcd.print("OK   OK      OK ");
+}
+
 void setup() {
     Serial.begin(57600);
     // set up LCD
@@ -155,7 +182,22 @@ void setup() {
 
 void loop() {
     pinDebouncer.update();
-
+    if ((MODE == RUNMODE) && (millis() - last_millis >= 1000)) {
+        last_millis = millis();
+        if (value_minute > 0 || value_second > 0) {
+            value_second -= 1;
+            if (value_second < 0 && value_minute > 0) {
+                value_minute -= 1;
+                value_second = 59;
+            }
+            updateLCD();
+        } else  {
+            MODE = ALERTMODE;
+            lcd.setCursor(0, 0);
+            lcd.print("ALERT REACHED");
+            setLCDOkOkOk();
+        }
+    }
 }
 
 /*
