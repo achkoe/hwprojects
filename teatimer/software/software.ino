@@ -1,5 +1,6 @@
 /* teatimer code */
 
+#include <EEPROM.h>
 #include <LiquidCrystal.h>
 #include <FTDebouncer.h>
 
@@ -18,8 +19,12 @@ unsigned char MODE = WAITMODE;
 char value_minute, value_minute_save;
 char value_second, value_second_save;
 unsigned long last_millis;
+bool blink;
 #define VALUE_MINUTE_MAX 255
 #define VALUE_SECOND_MAX 59
+#define EEPROM_ADDRESS_MINUTE 0
+#define EEPROM_ADDRESS_SECOND 1
+#define USE_EEPROM
 char BUFFER[20];
 
 
@@ -45,13 +50,21 @@ void onPinActivated(int btnNumber){
         } else if (btnNumber == BTNRIGHT) {
             // 'Start' button pressed
             MODE = RUNMODE;
-            //setCaption("Reset", "Pause", "Stop");
+            setLCDResetPauseStop();
             if (value_minute == 0 && value_second == 0) {
                 value_minute = VALUE_MINUTE_MAX;
                 value_second = VALUE_SECOND_MAX;
             }
             value_minute_save = value_minute;
             value_second_save = value_second;
+            #ifdef USE_EEPROM
+            if (EEPROM.read(EEPROM_ADDRESS_MINUTE) != value_minute_save) {
+                EEPROM.write(EEPROM_ADDRESS_MINUTE, value_minute_save);
+            }
+            if (EEPROM.read(EEPROM_ADDRESS_SECOND) != value_second_save) {
+                EEPROM.write(EEPROM_ADDRESS_SECOND, value_second_save);
+            }
+            #endif
             last_millis = millis();
             updateLCD();
         }
@@ -112,9 +125,52 @@ void onPinActivated(int btnNumber){
         // any button pressed
         value_minute = value_minute_save;
         value_second = value_second_save;
+        lcd.display();
         updateLCD();
         setLCDMinSecStart();
         MODE = WAITMODE;
+    }
+    else if (MODE == RUNMODE) {
+        if (btnNumber == BTNLEFT) {
+            // 'Reset' button pressed
+            MODE = WAITMODE;
+            value_minute = 0;
+            value_second = 0;
+            setLCDMinSecStart();
+            updateLCD();
+        } else if (btnNumber == BTNMIDDLE) {
+            // 'Pause' button pressed
+            MODE = PAUSEMODE;
+            setLCDResetContStop();
+        } else if (btnNumber == BTNRIGHT) {
+            // 'Stop' button pressed
+            MODE = WAITMODE;
+            value_minute = value_minute_save;
+            value_second = value_second_save;
+            setLCDMinSecStart();
+            updateLCD();
+        }
+    }
+    else if (MODE == PAUSEMODE) {
+        if (btnNumber == BTNLEFT) {
+            // 'Reset' button pressed
+            MODE = WAITMODE;
+            value_minute = 0;
+            value_second = 0;
+            setLCDMinSecStart();
+            updateLCD();
+        } else if (btnNumber == BTNMIDDLE) {
+            // 'Cont' button pressed
+            MODE = RUNMODE;
+            setLCDResetPauseStop();
+        } else if (btnNumber == BTNRIGHT) {
+            // 'Stop' button pressed
+            MODE = WAITMODE;
+            value_minute = value_minute_save;
+            value_second = value_second_save;
+            setLCDMinSecStart();
+            updateLCD();
+        }
     }
     digitalWrite(LED_BUILTIN, HIGH);
 }
@@ -143,6 +199,20 @@ void updateSecond() {
     lcd.print(BUFFER);
 }
 
+void setLCDResetContStop() {
+    lcd.setCursor(0, 1);
+            // 00000000011111111
+            // 12345678901234456
+    lcd.print("Reset Cont  Stop");
+}
+
+void setLCDResetPauseStop() {
+    lcd.setCursor(0, 1);
+            // 00000000011111111
+            // 12345678901234456
+    lcd.print("Reset Pause Stop");
+}
+
 void setLCDMinSecStart() {
     lcd.setCursor(0, 1);
             // 00000000011111111
@@ -166,6 +236,12 @@ void setLCDOkOkOk() {
 
 void setup() {
     Serial.begin(57600);
+
+    #ifdef USE_EEPROM
+    value_minute = EEPROM.read(EEPROM_ADDRESS_MINUTE);
+    value_second = EEPROM.read(EEPROM_ADDRESS_SECOND);
+    #endif
+
     // set up LCD
     lcd.begin(16, 2);
     updateLCD();
@@ -195,6 +271,19 @@ void loop() {
             lcd.print("ALERT REACHED");
             setLCDOkOkOk();
         }
+    } 
+    else if (MODE == ALERTMODE) {
+        if (millis() - last_millis >= 200) {
+            last_millis = millis();
+            blink = !blink;
+            if (blink) {
+                lcd.display();
+            } else {
+                lcd.noDisplay();
+            }
+
+        }
+
     }
 }
 
