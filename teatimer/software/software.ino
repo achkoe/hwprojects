@@ -15,12 +15,12 @@
 #define BTNMIDDLE 8
 #define BTNRIGHT 7
 unsigned char MODE = WAITMODE;
-unsigned char value_minute, value_minute_save;
-signed char value_second, value_second_save;
+char value_minute, value_minute_save;
+char value_second, value_second_save;
 unsigned long last_millis;
 #define VALUE_MINUTE_MAX 255
 #define VALUE_SECOND_MAX 59
-char BUFFER[16];
+char BUFFER[20];
 
 
 // initialize LCD interface 
@@ -29,7 +29,6 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 FTDebouncer pinDebouncer(30);
 
 void onPinActivated(int btnNumber){
-    Serial.println(btnNumber);
     if (MODE == WAITMODE) {
         if (btnNumber == BTNLEFT) {
             // 'Min' button pressed
@@ -123,7 +122,6 @@ void onPinActivated(int btnNumber){
 void onPinDeactivated(int pinNumber){
     // do something according to the _pinNR that is triggered
     // for instance:
-    Serial.println(pinNumber);
     digitalWrite(LED_BUILTIN, LOW);
 }
 
