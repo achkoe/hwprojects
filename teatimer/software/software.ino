@@ -16,7 +16,7 @@
 #define BTNMIDDLE 8
 #define BTNRIGHT 7
 unsigned char MODE = WAITMODE;
-char value_minute, value_minute_save;
+unsigned char value_minute, value_minute_save;
 char value_second, value_second_save;
 unsigned long last_millis;
 bool blink;
@@ -26,7 +26,7 @@ bool blink;
 #define EEPROM_ADDRESS_SECOND 1
 #define USE_EEPROM
 char BUFFER[20];
-
+#define SPEAKER 10
 
 // initialize LCD interface 
 const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
@@ -126,6 +126,7 @@ void onPinActivated(int btnNumber){
         value_minute = value_minute_save;
         value_second = value_second_save;
         lcd.display();
+        noTone(SPEAKER);
         updateLCD();
         setLCDMinSecStart();
         MODE = WAITMODE;
@@ -235,6 +236,7 @@ void setLCDOkOkOk() {
 }
 
 void setup() {
+    pinMode(SPEAKER, OUTPUT);
     Serial.begin(57600);
 
     #ifdef USE_EEPROM
@@ -278,8 +280,10 @@ void loop() {
             blink = !blink;
             if (blink) {
                 lcd.display();
+                tone(SPEAKER, 230, 500);
             } else {
                 lcd.noDisplay();
+                noTone(SPEAKER);
             }
 
         }
