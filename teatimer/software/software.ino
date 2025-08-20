@@ -4,6 +4,9 @@
 #include <LiquidCrystal.h>
 #include <FTDebouncer.h>
 
+
+#define VERSIONSTR "teatimer 1.0.0"
+
 // different states of state machine
 # define WAITMODE 0
 # define MINMODE 1
@@ -246,10 +249,18 @@ void setup() {
 
     // set up LCD
     lcd.begin(16, 2);
+    lcd.setCursor(0, 0);
+    lcd.print(VERSIONSTR);
+    lcd.setCursor(0, 1);
+    sprintf(BUFFER, "Accu=%d", analogRead(A0));
+    lcd.print(BUFFER);
+    delay(2000);
+    lcd.clear();
+    
     updateLCD();
     setLCDMinSecStart();
 
-    // setuo buttons
+    // setup buttons
     pinDebouncer.addPin(7, HIGH, INPUT_PULLUP); // internal pull-up resistor 
     pinDebouncer.addPin(8, HIGH, INPUT_PULLUP); // internal pull-up resistor 
     pinDebouncer.addPin(9, HIGH, INPUT_PULLUP); // internal pull-up resistor 
