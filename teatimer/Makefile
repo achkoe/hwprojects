@@ -1,5 +1,5 @@
 src=software
-output=/home/achimk/work/hwprojects/teatimer/software/build
+output=/home/achimk/work/hwprojects/teatimer/build
 
 compile:
 	arduino-cli compile -v --fqbn arduino:avr:nano --build-path ./build software
