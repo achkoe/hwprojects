@@ -22,8 +22,8 @@ class NPath():
 def makegrid(contour, canvas):
     xmin = -60
     xmax = 60
-    ymin = -40
-    ymax = 40
+    ymin = -45
+    ymax = 45
     
     for x in range(xmin, xmax, 10):
         canvas.text(x, ymax + 1, f"{x}", [text.halign.boxcenter])
@@ -63,7 +63,7 @@ color_cut_2 = color.cmyk.ForestGreen
 
 # region frame
 W = 104.2  # width
-H = 66.5   # height
+H = 66.0   # height
 D = 9      # height of material
 
 contour = path.path(
@@ -111,14 +111,90 @@ canvas.stroke(
     [style.linewidth(0.1 if THIN else 2 * R), style.linecap.round, color_cut_2])
 # endregion
 
+# region hinge_left
+R = 3
+w = 17
+h = 8
+contour = path.path(
+    path.moveto(-(W / 2) + w, +(H / 2) + 2),
+    path.lineto(-(W / 2) + 0, +(H / 2) + 2),
+    path.lineto(-(W / 2) + 0, +(H / 2) + 2 + h),
+    path.lineto(-(W / 2) + w, +(H / 2) + 2 + h),
+    path.lineto(-(W / 2) + w, +(H / 2) + 2),
+)
+if 0:
+    canvas.stroke(contour, [style.linewidth.THIN, color_show])
+R = 1
+npath_hinge_left = NPath()
+canvas.stroke(
+    path.path(
+        npath_hinge_left.moveto(-(W / 2) + w - R, +(H / 2) + 2 + R),
+        npath_hinge_left.lineto(-(W / 2) + 0 + R, +(H / 2) + 2 + R),
+        npath_hinge_left.lineto(-(W / 2) + 0 + R, +(H / 2) + 2 + h - R),
+        npath_hinge_left.lineto(-(W / 2) + w - R, +(H / 2) + 2 + h - R),
+        npath_hinge_left.lineto(-(W / 2) + w - R, +(H / 2) + 2 + R),
+        npath_hinge_left.lineto(-(W / 2) + w - 2 * R, +(H / 2) + 2 + 2 * R),
+        npath_hinge_left.lineto(-(W / 2) + 0 + 2 * R, +(H / 2) + 2 + 2 * R),
+        npath_hinge_left.lineto(-(W / 2) + 0 + 2 * R, +(H / 2) + 2 + h - 2 * R),
+        npath_hinge_left.lineto(-(W / 2) + w - 2 * R, +(H / 2) + 2 + h - 2 * R),
+        npath_hinge_left.lineto(-(W / 2) + w - 2 * R, +(H / 2) + 2 + 2 * R),
+        npath_hinge_left.lineto(-(W / 2) + w - 3 * R, +(H / 2) + 2 + 3 * R),
+        npath_hinge_left.lineto(-(W / 2) + 0 + 3 * R, +(H / 2) + 2 + 3 * R),
+        npath_hinge_left.lineto(-(W / 2) + 0 + 3 * R, +(H / 2) + 2 + h - 3 * R),
+        npath_hinge_left.lineto(-(W / 2) + w - 3 * R, +(H / 2) + 2 + h - 3 * R),
+        npath_hinge_left.lineto(-(W / 2) + w - 3 * R, +(H / 2) + 2 + 3 * R),
+        npath_hinge_left.lineto(-(W / 2) + w - 4 * R, +(H / 2) + 2 + 4 * R),
+        npath_hinge_left.lineto(-(W / 2) + 0 + 4 * R, +(H / 2) + 2 + 4 * R),
+    ),
+    [style.linewidth(0.1 if THIN else 2 * R), style.linecap.round, color_cut_2])
+# endregion
 
-def make_cut(outlist, npath, zlist):
+# region hinge_right
+R = 3
+w = 17
+h = 8
+contour = path.path(
+    path.moveto(+(W / 2) - w + w, +(H / 2) + 2),
+    path.lineto(+(W / 2) - w + 0, +(H / 2) + 2),
+    path.lineto(+(W / 2) - w + 0, +(H / 2) + 2 + h),
+    path.lineto(+(W / 2) - w + w, +(H / 2) + 2 + h),
+    path.lineto(+(W / 2) - w + w, +(H / 2) + 2),
+)
+if 0:
+    canvas.stroke(contour, [style.linewidth.THIN, color_show])
+R = 1
+npath_hinge_right = NPath()
+canvas.stroke(
+    path.path(
+        npath_hinge_right.moveto(+(W / 2) - w + w - R, +(H / 2) + 2 + R),
+        npath_hinge_right.lineto(+(W / 2) - w + 0 + R, +(H / 2) + 2 + R),
+        npath_hinge_right.lineto(+(W / 2) - w + 0 + R, +(H / 2) + 2 + h - R),
+        npath_hinge_right.lineto(+(W / 2) - w + w - R, +(H / 2) + 2 + h - R),
+        npath_hinge_right.lineto(+(W / 2) - w + w - R, +(H / 2) + 2 + R),
+        npath_hinge_right.lineto(+(W / 2) - w + w - 2 * R, +(H / 2) + 2 + 2 * R),
+        npath_hinge_right.lineto(+(W / 2) - w + 0 + 2 * R, +(H / 2) + 2 + 2 * R),
+        npath_hinge_right.lineto(+(W / 2) - w + 0 + 2 * R, +(H / 2) + 2 + h - 2 * R),
+        npath_hinge_right.lineto(+(W / 2) - w + w - 2 * R, +(H / 2) + 2 + h - 2 * R),
+        npath_hinge_right.lineto(+(W / 2) - w + w - 2 * R, +(H / 2) + 2 + 2 * R),
+        npath_hinge_right.lineto(+(W / 2) - w + w - 3 * R, +(H / 2) + 2 + 3 * R),
+        npath_hinge_right.lineto(+(W / 2) - w + 0 + 3 * R, +(H / 2) + 2 + 3 * R),
+        npath_hinge_right.lineto(+(W / 2) - w + 0 + 3 * R, +(H / 2) + 2 + h - 3 * R),
+        npath_hinge_right.lineto(+(W / 2) - w + w - 3 * R, +(H / 2) + 2 + h - 3 * R),
+        npath_hinge_right.lineto(+(W / 2) - w + w - 3 * R, +(H / 2) + 2 + 3 * R),
+        npath_hinge_right.lineto(+(W / 2) - w + w - 4 * R, +(H / 2) + 2 + 4 * R),
+        npath_hinge_right.lineto(+(W / 2) - w + 0 + 4 * R, +(H / 2) + 2 + 4 * R),
+    ),
+    [style.linewidth(0.1 if THIN else 2 * R), style.linecap.round, color_cut_2])
+# endregion
+
+
+def make_cut(outlist, npath, zlist, flast=800):
     save = [*npath.coordinates[0], ZSAVE]
     outlist.append("G00 X{0} Y{1} Z{2} F{3}".format(save[0], save[1], save[2], f))
     for z in zlist:
         for coordinate in npath.coordinates:
             outlist.append("G00 X{0} Y{1} Z{2} F{3}".format(coordinate[0], coordinate[1], z, f))
-    outlist.append("G00 X{0} Y{1} Z{2} F{3}".format(save[0], save[1], save[2], f))
+    outlist.append("G00 X{0} Y{1} Z{2} F{3}".format(save[0], save[1], save[2], flast))
 
 
 filename = str(basename.with_suffix(".pdf"))
@@ -133,10 +209,38 @@ outlist.append("; frame")
 make_cut(outlist, npath_frame, zlist)
 outlist.append("M1")
 
-zlist = [-1, -2, -3, -4, -5, -6, -7, -8, -9, -10, -11, -12, -13, -14, -15, -16, -17]
-outlist.append("; hole")
-make_cut(outlist, npath_hole, zlist)
+outlist.append("; holes")
+outlist.append("G00 X-49.1 Y30.0 Z15 F800")
+outlist.append("G00 X-49.1 Y30.0 Z-11.5 F800")
+outlist.append("G00 X-49.1 Y30.0 Z15 F800")
+
+outlist.append("G00 X49.1 Y30.0 Z15 F800")
+outlist.append("G00 X49.1 Y30.0 Z-11.5 F800")
+outlist.append("G00 X49.1 Y30.0 Z15 F800")
+
+outlist.append("G00 X49.1 Y-30.0 Z15 F800")
+outlist.append("G00 X49.1 Y-30.0 Z-11.5 F800")
+outlist.append("G00 X49.1 Y-30.0 Z15 F800")
+
+outlist.append("G00 X-49.1 Y-30.0 Z15 F800")
+outlist.append("G00 X-49.1 Y-30.0 Z-11.5 F800")
+outlist.append("G00 X-49.1 Y-30.0 Z15 F800")
+
+zlist = [-1, -2, -3, -4, -5, -6, -7, -8, -9, -10, -11, -12, -13, -14, -15, -16, -17, -18, -19]
+outlist.append("; greathole")
+make_cut(outlist, npath_hole, zlist, 100)
 outlist.append("M1")
+
+if 0:
+    zlist = [-1,]
+    outlist.append("; hinge_left")
+    make_cut(outlist, npath_hinge_left, zlist)
+    outlist.append("M1")
+
+    zlist = [-1,]
+    outlist.append("; hinge_right")
+    make_cut(outlist, npath_hinge_right, zlist)
+    outlist.append("M1")
 
     
 filename = str(basename.with_suffix(".nc"))
